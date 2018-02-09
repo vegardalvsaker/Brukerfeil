@@ -17,9 +17,8 @@ func main() {
 	length := len(hexString)
 	for i := 0; i < length; i++ {
 		hexValue := hexString[i]
-		fmt.Println(hexValue)
 		//fmt.Printf("%x\t %b \n", hexValue )
-		//fmt.Printf("%b\n", hexValue)
+		fmt.Printf("%X\t %c\t %b\n", hexValue, hexValue, hexValue)
 
 	}
  }
