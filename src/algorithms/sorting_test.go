@@ -39,7 +39,7 @@ func benchmarkBSortM(i int, b *testing.B) {
 		b.StopTimer()
 		values := perm(i)
 		b.StartTimer()
-		Bubble_sort_modified(values)
+		BubbleSortModified(values)
 	}
 }
 

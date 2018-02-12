@@ -1,53 +1,30 @@
 package algorithms
 
-//import "fmt"
-
 // Les https://en.wikipedia.org/wiki/Bubble_sort
-/**func BubbleSortModified(list []int) {
+func BubbleSortModified(list []int) {
 	// find the length of list n
 	n := len(list)
 	var i int
 	for i = 0; i < n; i++ {
 	sweep(list, i, n)
-	fmt.Println(list) //Printer rekkefølgen på listen for hver gjennomkjøring
 	}
-   }
+}
+
 func sweep(list []int, prevPasses int, N int) {
 	var firstIndex int = 0
 	var secondIndex int = 1
 
 	for secondIndex < (N - prevPasses) { //prevPasses er hvor mange ganger vi har iterert over listen. N-prevPasses så slepper vi å se på det siste tallet (som vi vet er riktig plassert)
-	var firstNumber int = list[firstIndex]
-	var secondNumber int = list[secondIndex]
-	if firstNumber > secondNumber {
+		var firstNumber int = list[firstIndex]
+		var secondNumber int = list[secondIndex]
+			if firstNumber > secondNumber {
 
-	list[firstIndex] = secondNumber
-	list[secondIndex] = firstNumber
-	}
+		list[firstIndex] = secondNumber
+		list[secondIndex] = firstNumber
+		}
 	firstIndex++
 	secondIndex++
   }
-}
-
-**/
-
-func Bubble_sort_modified(list []int) {
-	var N int = len(list)
-	var i int
-	for i = 0; i < N; i++{
-		var firstIndex int = 0
-		var secondIndex int = 1
-		for secondIndex < N {
-			var firstNumber int = list[firstIndex]
-			var secondNumber int = list[secondIndex]
-			if firstNumber > secondNumber {
-				list[firstIndex]  = secondNumber
-				list[secondIndex] = firstNumber
-			}
-			firstIndex++
-			secondIndex++
-		}
-	}
 }
 
 // Implementering av Bubble_sort algoritmen
