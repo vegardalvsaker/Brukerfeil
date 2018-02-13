@@ -1,9 +1,10 @@
 package main
 
 import (
-	"./test"
+	//"./test"
     //"./ascii"
 	"fmt"
+	"bytes"
 )
 
 
@@ -15,8 +16,36 @@ func main() {
 		"\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7\xF8\xF9\xFA\xFB\xFC\xFD\xFE\xFF"
 
     //ascii.IterateOverASCIIStringLiteral(hexString)
-	vegard.GetInput()
+	//vegard.GetInput()
+	printeGuden()
+
  }
+
+ func runeTesting() {
+	 runetekst := []byte{0x22, 0x20, 0x80}
+	 fmt.Printf(bytes.Runes(rune()))
+ }
+
+func lol()string {
+	//Verdiene skal i utgangspunktet representere " € ÷ ¾ dollar " (anførselstegn inkludert), men extended ascii-en er av type 8859-1
+	tekstbytes := []byte{0x22, 0x20, 0x80, 0x20, 0xF7, 0x20, 0xBE, 0x20, 0x64, 0x6F, 0x6C, 0x6C, 0x61, 0x72, 0x20, 0x22}
+	//////////////////////
+	fmt.Printf("%c \n", tekstbytes)
+	i := len(tekstbytes)
+	var nyTekst string
+	for j := 0; j < i; j++ {
+		if (tekstbytes[j] >= 0x80) && (tekstbytes[j] <= 0xFF )  {
+            temp := string(tekstbytes[j])
+			nyTekst = nyTekst + temp
+		}
+
+	}
+	return nyTekst
+}
+
+func printeGuden() {
+	fmt.Println(lol())
+}
 
 
 func IterateOverASCIIStringLiteral(sl string) {
@@ -28,36 +57,5 @@ func IterateOverASCIIStringLiteral(sl string) {
 	for i := 0; i < length; i++ {
 		hexValue := sl[i]
 		fmt.Printf("%X\t %c\t %b\n", hexValue, hexValue, hexValue)
-
 	}
 }
-/*
-	 func signalgreia() {
-		 ch := make(chan os.Signal, 1)
-		 signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-
-		 go func() {
-			 for sig := range ch {
-
-				 switch sig {
-				 case syscall.SIGTERM:
-					 fmt.Println("sigterm recieved")
-					 os.Exit(0)
-				 case syscall.SIGINT:
-					 fmt.Println("sigint received. Shutting down")
-					 os.Exit(0)
-				 case syscall.SIGQUIT:
-					 fmt.Println("sigquit received")
-					 os.Exit(0)
-
-				 }
-			 }
-		 }()
-		 time.Sleep(time.Minute)
-
-	 }
-*/
-
-
-
-
