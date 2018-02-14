@@ -71,6 +71,7 @@ func Signalgreia(text string) {
 		time.Sleep(time.Minute)
 	}
 }
+
 func GetInput() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()

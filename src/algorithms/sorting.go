@@ -1,6 +1,8 @@
 package algorithms
 
 // Les https://en.wikipedia.org/wiki/Bubble_sort
+
+//Kilde : https://www.youtube.com/watch?v=CAOoBjLATYI
 func BubbleSortModified(list []int) {
 	// find the length of list n
 	n := len(list)
