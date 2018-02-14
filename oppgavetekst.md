@@ -88,4 +88,4 @@ I OSx (mac) fikk vi riktig resultat i GoLand men ikke i terminal, den skrev whit
 Vi ser at disse resultatene stemmer overens med det vi sjekket i Oppgave 4a.  
 
 ## Oppgave 4C
-*Se fil under: src/ascii/iso_test.go*
+*Se filene under: src/ascii/iso_test.go og src/ascii/ascii.go *
