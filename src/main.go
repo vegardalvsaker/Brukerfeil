@@ -7,7 +7,8 @@ import (
 
 
 func main() {
-	ascii.ExtendedASCIIText4b()
-    //ascii.IterateOverASCIIStringLiteral()
+	ascii.IterateOverASCIIStringLiteral()
+	//ascii.ExtendedASCIIText4b()
+
 	//oppg3.GetInput()
  }

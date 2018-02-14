@@ -11,7 +11,7 @@ import (
 )
 /*
 Slik løste vi oppgave 3 til og begynne med, men vi endte opp med funksjonen som starter på linje 40.
- */
+
 func SignalFunc() {
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -31,7 +31,7 @@ func SignalFunc() {
 		}
 	}
 }
-
+*/
 
 /*
 OPPGAVE 3!!!
@@ -78,4 +78,3 @@ func GetInput() {
 	text := scanner.Text()
 	Signalgreia(text)
 }
-

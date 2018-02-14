@@ -27,7 +27,7 @@ func IterateOverASCIIStringLiteral() {
 func ExtendedASCIIText4b()string {
 	//Verdiene skal i utgangspunktet representere " € ÷ ¾ dollar " (anførselstegn inkludert), men extended ascii-en er av type 8859-1
 	tekstbytes := []byte{0x22, 0x20, 0x80, 0x20, 0xF7, 0x20, 0xBE, 0x20, 0x64, 0x6F, 0x6C, 0x6C, 0x61, 0x72, 0x20, 0x22}
-    //print(tekstbytes)
+    print(tekstbytes)
 	i := len(tekstbytes)
 	var nyTekst string
 
@@ -39,7 +39,9 @@ func ExtendedASCIIText4b()string {
 	}
 	return nyTekst
 }
-
+/*
+Egen funksjon for å printe siden ExtendedASCIIText returnerer, og ikke kan printe.
+ */
 func print(b  []byte){
 	fmt.Printf("%c", b)
 }
@@ -48,7 +50,7 @@ func print(b  []byte){
 func ExtendedASCIIText(s string)string {
 	//Verdiene skal i utgangspunktet representere " € ÷ ¾ dollar " (anførselstegn inkludert), men extended ascii-en er av type 8859-1
 	tekstbytes := []byte(s)
-
+	print(tekstbytes)
 	i := len(tekstbytes)
 	var nyTekst string
 	for j := 0; j < i; j++ {
