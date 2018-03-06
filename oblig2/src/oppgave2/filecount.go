@@ -14,7 +14,7 @@ func main() {
 	filbyte, _ := ioutil.ReadFile(fil)
 	lengde := len(filbyte)
 	//r, err := os.Open(fil)
-	fmt.Print(filbyte, lengde)
+	fmt.Println(filbyte, lengde)
 	fmt.Println(int(filbyte[0]))
 	fmt.Println(int(filbyte[1]))
 	fmt.Println(int(filbyte[2]))
