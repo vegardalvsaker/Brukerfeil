@@ -1,82 +1,88 @@
 package main
 
 import (
-		"fmt"
-		"os"
-        "log"
+	"fmt"
+	"os"
+	"log"
 )
 
-func main(){
-	filnavn := `C:\Users\Vegard\Documents\dev\Go\is-105\Brukerfeil\oblig2\src\oppgave1\filnavn.txt`
+func main() {
+	filepath := os.Args[1]
 
-	//os.Lstat returnerer en FileInfo av filen
-	fi, err := os.Lstat(filnavn)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-	//fi.Mode() returner en FileMode av FileInfo.
-	mode := fi.Mode()
-
-	//Filnavn
-	fmt.Println("Information about file <", fi.Name(), ">")
-
-	//Size
-	intBytes := fi.Size()
-	bytes := float64(intBytes) //Gjør int om til float64
-
-	KB := bytes / 1000
-	MB := KB / 1000
-	GB := MB / 1000
-	fmt.Println("Size:", fi.Name(), "in bytes, KB, MB and GB:")
-	fmt.Println(bytes, "bytes,", KB, "KB,", MB, "MB,", GB, "GB")
-
-	//Directory
-	if mode.IsDir() != true {
-		fmt.Println("Is not a directory")
-	} else {
-		fmt.Println("Is a directory")
-	}
-	//Regular
-	if mode.IsRegular() != true {
-		fmt.Println("Is not a regular file")
-	} else {
-		fmt.Println("Is a regular file")
-	}
-	//Unix permissions
-	//unixrep := mode&os.ModeSocket
-	var tekst = int(mode)
-	fmt.Println(tekst)
-	fmt.Println("Has Unix permission bits:", mode)
-
-	//Append
-	if mode&os.ModeAppend == 0 {
-		fmt.Println("Is not append only")
-	} else {
-		fmt.Println("Is append only")
+	file, err := os.Open(filepath)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	//Device file
-	if mode&os.ModeDevice == 0 {
-		fmt.Println("Is not a device file")
-	} else {
-		fmt.Println("Is a device file")
+	info, err := file.Stat()
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	//Unix character
-	if mode&os.ModeCharDevice == 0 {
-		fmt.Println("Is not a Unix character device")
+	//Leser, regner ut og printer størrelsen på filen i mb, kb osv
+	conv := info.Size()
+	bytes := float64(conv)
+	kb := bytes / 1024
+	mb := kb / 1024
+	gb := mb / 1024
+	fmt.Println("File is this large:\n", bytes, "Bytes\n", kb, "Kilobytes\n", mb, "Megabytes\n", gb, "Gigabytes\n")
+
+	//Sjekker om filen er en directory eller ikke
+	if info.IsDir() {
+		fmt.Println("This is a directory file.")
 	} else {
-		fmt.Println("Is a Unix character device")
+		fmt.Println("This is not a directory file.")
 	}
 
-	//Unix block
-	//if mode&os.
-
-	//Symbolic link
-	if mode&os.ModeSymlink == 0 {
-		fmt.Println("Is not a symbolic link")
+	//Sjekker om filen er en "regular file"
+	// For å gjøre dette må vi gjøre statsen(info) til en variabel av datatypen "FileMode" først
+	infomode := info.Mode()
+	if infomode.IsRegular() {
+		fmt.Println("This is a regular file.")
 	} else {
-		fmt.Println("Is a symbolic link")
+		fmt.Println("This is not a regular file.")
 	}
+
+	//Sjekker om filen har Unix permission bits -rwxrwxrwx (0666 er -rw-rw-rw- mens 0777 er -rwxrwxrwx i 8-tallsystem)
+	permBits := infomode.Perm()
+
+	if permBits == 0777 {
+		fmt.Println("This file has Unixcode", permBits, ", this means that everyone can access the file.")
+	} else {
+		fmt.Println("This file does not have Unixcode -rwxrwxrwx, it has the following code:\n", permBits,
+			", this means that the file has limited permissions.")
+	}
+
+	//Sjekker om filen er append only
+	/* Switch case er en mulighet.
+	switch mode := info.Mode(); {
+	case mode&os.ModeAppend != 0:
+		fmt.Println("This file is append only")
+	case mode&os.ModeAppend == 0:
+		fmt.Println("This file is not append only")
+	}
+	*/
+	test := info.Mode()
+	if test&os.ModeAppend == 0 {
+		fmt.Println("This file is not append only.")
+	} else {
+		fmt.Println("This file is append only.")
+	}
+
+
+	//Sjekker om det er en device file
+	if test&os.ModeDevice == 0 {
+		fmt.Println("This file is not a device file.")
+	} else {
+		fmt.Println("This file is a device file.")
+	}
+
+	//Sjekker om det er en symbolic link
+	if test&os.ModeSymlink == 0 {
+		fmt.Println("This file is not a symbolic link.")
+	} else {
+		fmt.Println("This file is a symbolic link.")
+	}
+
 }
