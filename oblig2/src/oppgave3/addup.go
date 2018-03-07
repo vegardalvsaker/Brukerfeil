@@ -41,17 +41,7 @@ func errHandling(err error) {
 
 func oppgave3a(tall1, tall2 int) {
 	//Funksjon A
-	chsig := make(chan os.Signal, 1)
-	signal.Notify(chsig, syscall.SIGINT)
-	go func() {
-		for sig := range chsig {
-			switch sig {
-			case syscall.SIGINT:
-				fmt.Println("\n Sigint received. Shutting down safely")
-				os.Exit(0)
-			}
-		}
-	}()
+	sigintHandtering()
 	go func() {
 		ch <- tall1
 		ch <- tall2
@@ -69,4 +59,18 @@ func oppgave3a(tall1, tall2 int) {
 	}()
 
 	time.Sleep(10000000)
+}
+
+func sigintHandtering() {
+	chsig := make(chan os.Signal, 1)
+	signal.Notify(chsig, syscall.SIGINT)
+	go func() {
+		for sig := range chsig {
+			switch sig {
+			case syscall.SIGINT:
+				fmt.Println("\n Sigint received. Shutting down safely")
+				os.Exit(0)
+			}
+		}
+	}()
 }
