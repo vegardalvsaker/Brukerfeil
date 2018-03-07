@@ -42,28 +42,28 @@ func main() {
 
 	//Oppretter tomt map
 	var m= make(map[int]int)
-	//Oppretter tom intSlice for å legge inn resultatene av telling til runene.
-	var intSlice = []int{}
+	//Oppretter tom countResult for å legge inn resultatene av telling til runene.
+	var countResult = []int{}
 
 	//Teller hvor mange ganger hver rune har blitt brukt og legger den til i et map
 	for i := 0; i < len(runesUsed); i++ {
 		runeSep := []byte{runesUsed[i]}
 		count := bytes.Count(filbyte, runeSep)
-		intSlice = append(intSlice, count)
+		countResult = append(countResult, count)
 		m[int(runesUsed[i])] = count
 	}
 	//Henter ut en sortert liste fra resultatene ovenfor og finner de fem største
-	sortedIntSlice := bubbleSort(intSlice)
+	sortedIntSlice := bubbleSort(countResult)
 	lengthOfSortedIntSlice := len(sortedIntSlice) - 5
 	fiveLargestInts := sortedIntSlice[lengthOfSortedIntSlice:]
 
 	//Går gjennom mapet for og sjekker alle verdiene opp mot de fem største. Breaker ut av loopen da den finner det den skal finne
-Loop:
+Loop1:
 	for key, value := range m {
 		if value == fiveLargestInts[4] {
 			fmt.Printf("1. Rune: %q", key)
 			fmt.Printf(", Counts: %d \n", fiveLargestInts[4])
-			break Loop
+			break Loop1
 		}
 	}
 Loop2:
