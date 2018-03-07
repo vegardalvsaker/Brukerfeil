@@ -1,21 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"os"
 	"log"
 )
 
+var tall1 = os.Args[1]
+var tall2 = os.Args[2]
+
 func main() {
-	ch := make(chan int, 1)
-	//scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Enter a number")
-	input, err := fmt.Scan()
+	file, err := os.Create("enFil.txt")
 	if err != nil {
 		log.Fatal(err)
-		}
-	ch <- input
+	}
+	defer file.Close()
 
-	fmt.Println(input)
-
-
+	file.Write([]byte(tall1))
+	file.Write([]byte(" "))
+	file.Write([]byte(tall2))
+	file.Write([]byte(" "))
 }
