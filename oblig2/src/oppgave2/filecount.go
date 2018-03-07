@@ -18,7 +18,7 @@ func main() {
 	}
 
 	//Sjekker hvor mange linjer filen har
-	lines := 0
+	lines := 1 //Fordi den første linjen blir ikke telt
 	lineSep := []byte{'\n'}
 	lines += bytes.Count(filbyte, lineSep)
 
@@ -61,41 +61,46 @@ func main() {
 Loop1:
 	for key, value := range m {
 		if value == fiveLargestInts[4] {
-			fmt.Printf("1. Rune: %q", key)
-			fmt.Printf(", Counts: %d \n", fiveLargestInts[4])
-			break Loop1
+			fmt.Printf("1. Rune: %c", key)
+			fmt.Printf(", Counts: %d \n", value)
+			delete(m, key) //Sletter keyen for å forikre at samme rune ikke kommer flere ganger
+			break Loop1 //Forsikrer at printen gjelder kun for en key/value
 		}
 	}
 Loop2:
 	for key, value := range m {
 		if value == fiveLargestInts[3] {
-			fmt.Printf("2. Rune: %q", key)
-			fmt.Printf(", Counts: %d \n", fiveLargestInts[3])
-			break Loop2
+			fmt.Printf("2. Rune: %c", key)
+			fmt.Printf(", Counts: %d \n", value)
+			delete(m, key) //Sletter keyen for å forikre at samme rune ikke kommer flere ganger
+			break Loop2 //Forsikrer at printen gjelder kun for en key/value
 		}
 	}
 Loop3:
 	for key, value := range m {
 		if value == fiveLargestInts[2] {
-			fmt.Printf("3. Rune: %q", key)
-			fmt.Printf(", Counts: %d \n", fiveLargestInts[2])
-			break Loop3
+			fmt.Printf("3. Rune: %c", key)
+			fmt.Printf(", Counts: %d \n", value)
+			delete(m, key)
+			break Loop3 //Forsikrer at printen gjelder kun for en key/value
 		}
 	}
 Loop4:
 	for key, value := range m {
 		if value == fiveLargestInts[1] {
-			fmt.Printf("4. Rune: %q", key)
-			fmt.Printf(", Counts: %d \n", fiveLargestInts[1])
-			break Loop4
+			fmt.Printf("4. Rune: %c", key)
+			fmt.Printf(", Counts: %d \n", value)
+			delete(m, key)
+			break Loop4 //Forsikrer at printen gjelder kun for en key/value
 		}
 	}
 Loop5:
 	for key, value := range m {
 		if value == fiveLargestInts[0] {
-			fmt.Printf("5. Rune: %q", key)
+			fmt.Printf("5. Rune: %c", key)
 			fmt.Printf(", Counts: %d \n", fiveLargestInts[0])
-			break Loop5
+			delete(m, key)
+			break Loop5 //Forsikrer at printen gjelder kun for en key/value
 		}
 	}
 }
