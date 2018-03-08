@@ -9,9 +9,8 @@ import (
 )
 
 func main() {
-	//fil := os.Args[1]
+	fil := os.Args[1]
 
-	fil := `C:\Users\Vegard\Documents\dev\Go\is-105\Brukerfeil\oblig2\src\oppgave2\ronny.txt`
 	filbyte, err := ioutil.ReadFile(fil)
 	if err != nil {
 		log.Fatal(err)
@@ -24,14 +23,17 @@ func main() {
 
 	//Printer filnavnet og hvor mange linjer filen har
 	filnavn, _ := os.Lstat(fil)
+	fmt.Println()
 	fmt.Println("Information about:", filnavn.Name())
+	fmt.Println()
 	fmt.Println("Number of lines in file:", lines)
+	fmt.Println()
 
 	var runesUsed []byte
 	lengde := len(filbyte)
 
 	//Finner aller runes som er i filen
-	for i := 0x00; i < 0x80; i++ {
+	for i := 0x00; i < 0xFF; i++ {
 		for v := 0; v < lengde; v++ {
 			if int(filbyte[v]) == i {
 				runesUsed = append(runesUsed, filbyte[v])
@@ -57,6 +59,8 @@ func main() {
 	lengthOfSortedIntSlice := len(sortedIntSlice) - 5
 	fiveLargestInts := sortedIntSlice[lengthOfSortedIntSlice:]
 
+	fmt.Println("Most common runes:")
+	fmt.Println()
 	//Går gjennom mapet for og sjekker alle verdiene opp mot de fem største. Breaker ut av loopen da den finner det den skal finne
 Loop1:
 	for key, value := range m {
