@@ -3,17 +3,14 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"fmt"
 	"strings"
 	"strconv"
+	"os"
 )
 
-func main() {
-
+func SumFromFile() {
 	data, err := ioutil.ReadFile("enFil.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
+	ErrorHandling(err)
 
 	string1 := string(data)
 	array := strings.SplitAfter(string1, " ")
@@ -25,21 +22,25 @@ func main() {
 	d := strings.Replace(b, " ", "", -1)
 
 
-
+	//Converter c og d til
 	tall1, err := strconv.Atoi(c)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	ErrorHandling(err)
 	tall2, err := strconv.Atoi(d)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-
+	ErrorHandling(err)
 	sum := tall1 + tall2
 
+	sumstring := strconv.Itoa(sum)
 
-	fmt.Println("File sum:", sum)
+	file, err := os.Create("enFil.txt")
+	ErrorHandling(err)
+	defer file.Close()
 
+	file.Write([]byte(sumstring))
+	ReadFile()
+}
+
+func ErrorHandling(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
