@@ -84,5 +84,4 @@ func main() {
 	} else {
 		fmt.Println("This file is a symbolic link.")
 	}
-
 }

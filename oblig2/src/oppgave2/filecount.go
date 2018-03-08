@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fil := os.Args[1]
+	fil := `oblig2/src/files/text.txt`
 
 	filbyte, err := ioutil.ReadFile(fil)
 	if err != nil {
