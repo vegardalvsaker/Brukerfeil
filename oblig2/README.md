@@ -26,7 +26,7 @@ Oppgave 3a) ligger i oppgave3-mappen med navnet addup.go. Den bygde filen av pro
 Oppgave 3b) ligger i oppgave3-mappen med navnene addtofile.go og sumfromfile.go.
 Den bygde filen av programmet ligger i src/bin og tar to tall som argument.
 
-###c)
+### c)
 Vi har lagt til feilhåndtering ved alle I/O-operasjoner. Hvis det kommer en error som != nil kjører vi `log.Fatal()`.
 Denne printer erroren til loggen og avslutter programmet med ``os.Exit(1)``.
 
