@@ -21,9 +21,11 @@ func main() {
 	//Leser inn to tall fra terminal
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter a number: ")
-	tall1Str, _ := reader.ReadString('\n')
+	tall1Str, err1 := reader.ReadString('\n')
+	errHandling(err1)
 	fmt.Print("Enter one more number: ")
-	tall2Str, _ := reader.ReadString('\n')
+	tall2Str, err2 := reader.ReadString('\n')
+	errHandling(err2)
 
 	//Forsikrer at programmet fungerer også på Windows
 	c := strings.Replace(tall1Str, "\r", "", -1)
@@ -33,11 +35,11 @@ func main() {
 	f := strings.Replace(d, "\n", "", -1)
 
 	//Gjør inputen fra stdin om til int slik at vi kan addere
-	tall1, err := strconv.Atoi(e)
-	errHandling(err)
+	tall1, err3 := strconv.Atoi(e)
+	errHandling(err3)
 
-	tall2, err2 := strconv.Atoi(f)
-	errHandling(err2)
+	tall2, err4 := strconv.Atoi(f)
+	errHandling(err4)
 
 	oppgave3a(tall1, tall2)
 }
@@ -59,7 +61,6 @@ func oppgave3a(tall1, tall2 int) {
 		sum := add1 + add2
 		ch <- sum
 	}()
-
 	time.Sleep(10000000)
 }
 
@@ -69,9 +70,8 @@ func errHandling(err error) {
 		log.Fatal(err)
 	}
 }
-/*
-Håndterer en eventuell sigint
- */
+
+//Håndterer en eventuell sigint
 func sigintHandtering() {
 	chsig := make(chan os.Signal, 1)
 	signal.Notify(chsig, syscall.SIGINT)

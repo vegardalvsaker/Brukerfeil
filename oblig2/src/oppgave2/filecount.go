@@ -10,6 +10,8 @@ import (
 
 func main() {
 	fil := `oblig2/src/files/text.txt`
+	//Uncomment under for å teste i exe, bruker den over for å teste i IDE
+	//fil := `../files/text.txt`
 
 	filbyte, err := ioutil.ReadFile(fil)
 	if err != nil {

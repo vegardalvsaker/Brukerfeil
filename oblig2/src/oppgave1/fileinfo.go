@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	//filepath := `oblig2/src/files/text.txt`
 	filepath := os.Args[1]
 
 	file, err := os.Open(filepath)
