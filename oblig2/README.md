@@ -13,7 +13,8 @@ Oppgave 2 ligger i opggave2-mappen med navnet filecount.go. Den bygde filen av p
 
 Litt trøbbel med filepath i IDE vs Exe.
 Filepathen må se slik ut i IDE : `oblig2/src/files/text.txt`
-og slik i Exe: `../files/text.txt`
+og slik i Exe: `../files/text.txt`. Dette avhenger av hvilken mappe du åpner som GoLand-prosjekt. GoLand tar
+ utgangspunkt at du ligger i den øverste mappen, som i vårt tilfelle er mappen "Brukerfeil"
 
 Programmet tar ingen argumenter.
 
@@ -25,6 +26,7 @@ Oppgave 3a) ligger i oppgave3-mappen med navnet addup.go. Den bygde filen av pro
 ### b)
 Oppgave 3b) ligger i oppgave3-mappen med navnene addtofile.go og sumfromfile.go.
 Den bygde filen av programmet ligger i src/bin og tar to tall som argument.
+For å kjøre go filene må du skrive ``go run addtofile.go sumfromfile.go <tall1> <tall2> ``.
 
 ### c)
 Vi har lagt til feilhåndtering ved alle I/O-operasjoner. Hvis det kommer en error som != nil kjører vi `log.Fatal()`.
