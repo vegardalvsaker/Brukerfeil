@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	//Uncomment under hvis du vil kjøre rett fra IDE
 	//filepath := `oblig2/src/files/text.txt`
 	filepath := os.Args[1]
 
