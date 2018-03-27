@@ -1,1 +1,1 @@
-## Ronny Deila greats you
+## Ronny Deila greets you
