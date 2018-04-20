@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
 	"time"
 	"fmt"
 	"encoding/json"
@@ -23,7 +23,7 @@ type JsonStruct struct {
 
 type JsonStruct2 struct {
 	Entries []struct {
-		Latitude    string `json:"latitude"`
+		Latitude    string `json:"latitudeka"`
 		Navn        string `json:"navn"`
 		Plast       string `json:"plast"`
 		GlassMetall string `json:"glass_metall"`
@@ -35,22 +35,28 @@ type JsonStruct2 struct {
 	Posts int `json:"posts"`
 }
 
+type FylkesNummer struct {
+	ContainedItems []struct {
+		ID string `json: "id"`
+		Description string `json: "description"`
+		Owner string `json: "owner"`
+		Label string `json: label`
+	}
+}
 
+var fylker FylkesNummer
 var m JsonStruct
 var m2 []JsonStruct
 var m3 JsonStruct2
 
-var myClient = &http.Client{Timeout:10 * time.Second}
-
 func main() {
 
-	router := mux.NewRouter()
-	router.HandleFunc("/", Hello1)
-	router.HandleFunc("/2", Hello2)
+	http.HandleFunc("/", Hello1)
+	http.HandleFunc("/2", Hello2)
+	http.HandleFunc("/3", Hello3)
 
 	srvr := http.Server {
 		Addr:         ":8080",
-		Handler:      router,
 		ReadTimeout:  10* time.Second,
 		WriteTimeout: 10* time.Second,
 	}
@@ -68,7 +74,6 @@ func Hello1 (w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-
 	for dec.More() {
 		err := dec.Decode(&m)
 		if err != nil {
@@ -78,52 +83,42 @@ func Hello1 (w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Body.Close()
 
-	//t := json.Token(jsonBytes)
-
 	if err := json.Unmarshal(jsonBytes, &m2); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Fprintf(w, "\n")
 	fmt.Fprintf(w, "%s \n ", m2[2].Sted)
-
-		//w.Header().Set("Content-Type", "application/json")
-		//w.Write(js)
-
 }
 
 func Hello2 (w http.ResponseWriter, r *http.Request) {
 	res, _ := http.Get("https://hotell.difi.no/api/json/stavanger/miljostasjoner")
 	jsonBytes, _ :=ioutil.ReadAll(res.Body)
-	//jsonString := string(jsonBytes)
-	//jsonReader := strings.NewReader(jsonString)
-	//dec := json.NewDecoder(jsonReader)
 
 	if err := json.Unmarshal(jsonBytes, &m3); err != nil {
 		log.Fatal(err)
 	}
 
-
-	b, _ := ioutil.ReadFile("oblig3/src/oppgave2/index.html")
-	//n := len(b)
+	b, _ := ioutil.ReadFile("oppgave2/index.html")
 	streng := string(b)
 
 	t := template.Must(template.New("").Parse(streng))
-	//n := len(m3.Entries)
 	if err := t.Execute(w, m3); err != nil {
 		log.Fatal(err)
 	}
-
-	//fmt.Fprintf(w, "Alle navn i dette Json-datasettet: \n\n")
-	//for i := 0; i < len(m3.Entries); i++ {
-	//	fmt.Fprintf(w, "%v Her kan du sortere plast. J for ja, N for nei %v\n", m3.Entries[i].Navn, m3.Entries[i].Plast)
-	//}
 }
 
-func getJson(url string, target interface{}) error {
-	r, err := myClient.Get(url)
-	if err != nil {
-		return err
+func Hello3 (w http.ResponseWriter, r *http.Request) {
+	res, _ := http.Get("https://register.geonorge.no/api/subregister/sosi-kodelister/kartverket/fylkesnummer-alle.json?")
+	jsonBytes, _ := ioutil.ReadAll(res.Body)
+
+	if err := json.Unmarshal(jsonBytes, &fylker); err != nil {
+		log.Fatal(err)
 	}
-	defer r.Body.Close()
-	return json.NewDecoder(r.Body).Decode(target)
+	b, _ := ioutil.ReadFile("oppgave2/fylker.html")
+	streng := string(b)
+
+	t := template.Must(template.New("").Parse(streng))
+	if err := t.Execute(w, fylker); err != nil {
+		log.Fatal(err)
+	}
 }
