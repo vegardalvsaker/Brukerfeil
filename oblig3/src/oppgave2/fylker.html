@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fylkesnummer</title>
+</head>
+<body>
+{{range .ContainedItems}}
+<p>{{.Description}} er fylke #{{.Label}} <br>
+        {{.Owner}}<br>
+        <a href="{{.ID}}">Lenke</a> <br>
+                {{end}}
+</body>
+</html>
