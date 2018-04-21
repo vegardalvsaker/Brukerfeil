@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plastsortering</title>
+    <link href="src/oppgave2/style.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            width: 100%;
+            text-align: center;
+        }
+
+        table {
+            display: inline;
+        }
+
+        th {
+            font-size: 25px;
+        }
+        .navn {
+            margin-right: 0px;
+        }
+
+    </style>
+</head>
+<body>
+<h2>Her kan du sortere plast. J for ja, N for nei: </h2>
+
+
+<table>
+    <tr>
+        <th>Sted</th>
+        <th>Sortere plast?</th>
+    </tr>
+    <tr>
+    <tbody>
+    {{range $.Entries}}
+    <tr>
+        <td class="navn">{{.Navn}}</td>
+        <td class="plast">{{.Plast}} {{end}}</td>
+    </tr>
+
+    </tbody>
+    </tr>
+</table>
+</body>
+</html>
+<!--
+-->

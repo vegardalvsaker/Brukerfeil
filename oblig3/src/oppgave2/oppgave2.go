@@ -44,6 +44,23 @@ type FylkesNummer struct {
 	}
 }
 
+type BussHoldeplass struct {
+	BusStops []struct {
+		FullName     string  `json:"FullName"`
+		Name         string  `json:"Name"`
+		ShortName    string  `json:"ShortName"`
+		Latitude     float64 `json:"Latitude"`
+		Longitude    float64 `json:"Longitude"`
+		Zone1        int     `json:"Zone1"`
+		Zone2        int     `json:"Zone2"`
+		TransferTime int     `json:"TransferTime"`
+		Transfer     int     `json:"Transfer"`
+		BusStopType  int     `json:"BusStopType"`
+		BusStopID    int     `json:"BusStopId"`
+	} `json:"BusStops"`
+
+}
+var holdeplass BussHoldeplass
 var fylker FylkesNummer
 var m JsonStruct
 var m2 []JsonStruct
@@ -54,6 +71,7 @@ func main() {
 	http.HandleFunc("/", Hello1)
 	http.HandleFunc("/2", Hello2)
 	http.HandleFunc("/3", Hello3)
+	http.HandleFunc("/4", Hello4)
 
 	srvr := http.Server {
 		Addr:         ":8080",
@@ -98,7 +116,7 @@ func Hello2 (w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	b, _ := ioutil.ReadFile("oppgave2/index.html")
+	b, _ := ioutil.ReadFile("src/oppgave2/index.html")
 	streng := string(b)
 
 	t := template.Must(template.New("").Parse(streng))
@@ -114,11 +132,32 @@ func Hello3 (w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(jsonBytes, &fylker); err != nil {
 		log.Fatal(err)
 	}
-	b, _ := ioutil.ReadFile("oppgave2/fylker.html")
+	b, _ := ioutil.ReadFile("src/oppgave2/fylker.html")
 	streng := string(b)
 
 	t := template.Must(template.New("").Parse(streng))
 	if err := t.Execute(w, fylker); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func Hello4 (w http.ResponseWriter, r *http.Request){
+	res, _ := http.Get("http://sanntidsappservice-web-prod.azurewebsites.net/busstops?format=json")
+	jsonBytes, _ := ioutil.ReadAll(res.Body)
+
+	if err := json.Unmarshal(jsonBytes, &holdeplass); err != nil {
+		log.Fatal(err)
+	}
+
+	b, _ := ioutil.ReadFile("src/oppgave2/holdeplass.html")
+	streng := string(b)
+
+	t := template.Must(template.New("").Parse(streng))
+	if err := t.Execute(w, holdeplass); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Hello5(w http.ResponseWriter, r *http.Request){
+
 }

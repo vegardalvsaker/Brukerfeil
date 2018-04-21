@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bussholdeplasser i Agder</title>
+    <style>
+        table {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+<h3>Oversikt over bussholdeplasser sitt kortnavn og fulle navn</h3>
+<table>
+    <thead>
+    <th>Fullt navn</th>
+    <th>Kortnavn</th>
+    </thead>
+    <tbody>
+{{range .BusStops}}
+    <td>{{.FullName}}</td>
+            <td>{{.ShortName}}</td>
+            {{end}}
+    </tbody>
+</table>
+</body>
+</html>
