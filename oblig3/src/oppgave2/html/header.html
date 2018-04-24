@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+{{define "css"}}
+        .navbar {
+            text-align: center;
+            background-color: yellow;
+            width: 100%;
+        }
+        .tempA {
+            margin: 15px;
+            font-size: 30px;
+            border-width: 4px;
+            border-style: solid;
+            text-decoration: none;
+        }
+        .tempA:hover {
+            color: white;
+            background-color: black;
+        }
+{{end}}
+    </style>
+
+</head>
+<body>
+{{define "navbar"}}
+        <nav class="navbar">
+            <a class="tempA" href="1">/1</a>
+            <a class="tempA" href="2">/2</a>
+            <a class="tempA" href="3">/3</a>
+            <a class="tempA" href="4">/4</a>
+            <a class="tempA" href="5">/5</a>
+        </nav>{{end  }}
+</body>
+</html>

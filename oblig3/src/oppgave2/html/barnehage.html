@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Barnehager i Bergen</title>
+    <style>{{template "css"}}</style>
+</head>
+<body style="text-align: center">
+{{template "navbar"}}
+<h3>Barnehager i Bergen.</h3>
+<p> {{range .Entries}}
+    {{.Navn}} har disse koordinatene {{.Longitude}}, {{.Latitude}}<br>{{end}}</p>
+</body>
+</html>
