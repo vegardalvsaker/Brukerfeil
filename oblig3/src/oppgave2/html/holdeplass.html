@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bussholdeplasser i Agder</title>
+    <style>
+        {{template "css"}}
+        body {
+            width: 100%;
+            text-align: center;
+            background-color: antiquewhite;
+
+        }
+        h3 {
+            font-size: 30px;
+            padding: 20px;
+            background-color: cornflowerblue;
+            color: yellow;
+            border-width: thick;
+            border-style: solid;
+            display: inline-block;
+        }
+        th {
+            font-size: 25px;
+        }
+        table {
+            display: inline;
+            font-family: "Verdana";
+        }
+        tbody {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+{{template "navbar"}}
+<h3>Oversikt over bussholdeplassers fulle og korte navn</h3><br>
+<table>
+    <tr>
+        <th>Fullt navn</th>
+        <th>Kortnavn</th>
+    </tr>
+
+    <tbody>
+    {{range .BusStops}}
+            <tr>
+        <td>{{.FullName}}</td>
+        <td>{{.ShortName}} {{end}}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

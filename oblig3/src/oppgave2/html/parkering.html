@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parkering</title>
+    <style>{{template "css"}}</style>
+</head>
+<body>
+{{template "navbar"}}
+<h1 style="text-align: center;">Steder du kan parkere per dags dato</h1>
+<p style="text-align: center;">
+    {{range .}}
+            Sted: {{.Sted}}
+                    Dato: {{.Dato}}<br>{{end}}
+
+
+</p>
+</body>
+</html>
