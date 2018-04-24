@@ -1,5 +1,11 @@
 ## Brukerfeil
-<p>Vegard Alvsaker</p>
-<p>Ingve Fosse</p>
-<p>Espen Sivertsen Oftedal</p>
-<p>Filip Østrem</p>
+# Oblig3
+
+Vegard Alvsaker, Ingve Fosse, Espen Oftedal og Filip Ã˜strem
+
+## Oppgave 1
+Oppgave 1 ligger i `src/oppgave1` med navnet `oppgave1.go`.
+## Oppgave 2
+Oppgave 2 ligger i `src/oppgave2` med navnet `oppgave2.go`. HTML-filene ligger i `src/oppgave2/html`
+## Oppgave 3
+Oppgave 3 ligger i `src/oppgave3` med filene `tcp_udp_server.go`, `tcp_client.go` `udp_client.go`
