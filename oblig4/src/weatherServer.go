@@ -70,7 +70,7 @@ func index (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func runWeather (w http.ResponseWriter, r *http.Request) {
+func runForecast (w http.ResponseWriter, r *http.Request) {
 	//Hvis en bruker går på /forecast uten å submitte koordinater
 	if len(latLng) <= 0 {
 		t, _ := template.ParseFiles("feil.html")
@@ -88,7 +88,7 @@ func runWeather (w http.ResponseWriter, r *http.Request) {
 
 	getAndUnmarshal(getUrl, &weath)
 
-	t, err := template.ParseFiles("weathData.html", "above25.html")
+	t, err := template.ParseFiles("forecast.html", "above25.html")
 	errorHandling(err)
 	t.Execute(w, weath)
 	}
@@ -97,7 +97,7 @@ func runWeather (w http.ResponseWriter, r *http.Request) {
 //Server-funksjon som håndterer paths
 func server() {
 	http.HandleFunc("/", index) // setting router rule
-	http.HandleFunc("/forecast", runWeather)
+	http.HandleFunc("/forecast", runForecast)
 	panic(http.ListenAndServe(":8080", nil))
 }
 
