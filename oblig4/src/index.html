@@ -1,23 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{template "gmapsCSS"}}
     <meta charset="UTF-8">
     <title>WeatherData</title>
+    <style>
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
 </head>
 <body>
-{{template "gmapsBody"}}
+
+<div id="floating-panel">
+    <input id="address" type="textbox" placeholder="Søk etter sted...">
+    <input id="submit"  type="button"  value="Søk">
+</div>
+
+<div id="map"></div>
+
+<form id="myForm" action="/" method="post">
+    <input class="hidden" type="text" id="postLatLng" name="kords">
+    <input class="hidden" type="text" id="by" name="by">
+</form>
+
+<a href="/forecast" id="onReload"></a>
+
 <script>
     function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 8,
-            center: {lat: {{ .Latitude}}, lng: {{ .Longitude}}}
         });
         var geocoder = new google.maps.Geocoder();
 
         document.getElementById('submit').addEventListener('click', function() {
             geocodeAddress(geocoder, map);
         });
+
+        var by = {{.Sted}};
+        if (by !== "Søk etter sted..." || by === "") {
+            document.getElementById('onReload').textContent = 'Til værmeldingen for ' + by;
+        };
     }
 
     function geocodeAddress(geocoder, resultsMap) {
@@ -30,7 +51,10 @@
                     position: results[0].geometry.location
                 });
                 var latLng = marker.position;
-                document.getElementById("link").setAttribute("href", latLng);
+                document.getElementById("postLatLng").setAttribute("value", latLng);
+                document.getElementById("by").setAttribute("value", address);
+                document.getElementById("myForm").submit();
+                document.getElementById("tilForecast").style.visibility = "visible"
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
             }
