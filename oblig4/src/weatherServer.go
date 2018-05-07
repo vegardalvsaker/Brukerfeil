@@ -15,7 +15,7 @@ type Sted struct {
 }
 
 type WeatherData struct {
-	Sted        string
+	Sted      string
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Currently struct {
@@ -48,7 +48,16 @@ const weatherUrlWithKey = "https://api.darksky.net/forecast/a529911b60d81bab2c79
 //Query-parametre for å få norsk værdata med metric units
 const langAndUnits = "?lang=nb&units=si"
 
+//Server-funksjon som håndterer paths
+func server() {
+	http.HandleFunc("/", index) // setting router rule
+	http.HandleFunc("/forecast", runForecast)
+	panic(http.ListenAndServe(":8080", nil))
+}
+
 func main() {
+	fmt.Println("Webserver for værdata startet!")
+	fmt.Println("Lytter for http requests på localhost:8080")
 	server()
 }
 
@@ -73,32 +82,35 @@ func index (w http.ResponseWriter, r *http.Request) {
 func runForecast (w http.ResponseWriter, r *http.Request) {
 	//Hvis en bruker går på /forecast uten å submitte koordinater
 	if len(latLng) <= 0 {
-		t, _ := template.ParseFiles("feil.html")
+		t, err := template.ParseFiles("feil.html")
+		httpErrorHandling(w, err)
 		t.Execute(w, nil)
 	} else {
 
-	fmt.Println(r.URL.Path)
-	//Setter sammen API-urlen sammen med koordinatene for å få en fungerende url
-	fmt.Println(latLng)
-	//Setter sammen API-urlen sammen med koordinatene
-	latAndLang := latLng + langAndUnits
-	strSlice := []string{weatherUrlWithKey, latAndLang}
-	getUrl := strings.Join(strSlice, "/")
-	fmt.Println("Weather data collected from: ", getUrl)
+		//Setter sammen API-urlen sammen med koordinatene
+		url := joinUrlAndCoord()
 
-	getAndUnmarshal(getUrl, &weath)
+		//Server prints for debugging
+		fmt.Println(r.URL.Path)
+		fmt.Println(latLng)
+		fmt.Println("Weather data collected from: ", url)
 
-	t, err := template.ParseFiles("forecast.html", "above25.html")
-	errorHandling(err)
-	t.Execute(w, weath)
+		getAndUnmarshal(url, &weath, w)
+
+		//Funksjon for å velge ut "skreddersydde" meldinger til sluttbrukeren
+		executeTilbakemelding(w)
+
+	}
+	//Resetter by-variabelen for å fjerne linken på framsiden hvis du velger å gå tilbake.
+	by = Sted {
+		Sted: "Søk etter sted...",
 	}
 }
 
-//Server-funksjon som håndterer paths
-func server() {
-	http.HandleFunc("/", index) // setting router rule
-	http.HandleFunc("/forecast", runForecast)
-	panic(http.ListenAndServe(":8080", nil))
+func joinUrlAndCoord() string {
+	latAndLang := latLng + langAndUnits
+	strSlice := []string{weatherUrlWithKey, latAndLang}
+	return strings.Join(strSlice, "/")
 }
 
 //Funksjon for å hente koordinatene og navn til det stedet brukeren ønsker værdata fra
@@ -113,11 +125,9 @@ func getForm(r *http.Request){
 		by = Sted {
 			Sted: stedsNavn,
 		}
-
 		weath = WeatherData{
 			Sted: stedsNavn,
 		}
-
 		//Printer informasjonen hentet fra brukeren til serveren
 		fmt.Println(latLng)
 		fmt.Println(stedsNavn)
@@ -127,10 +137,8 @@ func getForm(r *http.Request){
 func httpErrorHandling(w http.ResponseWriter, err error) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
-
 
 //Enkel feilhåndtering
 func errorHandling(err error) {
@@ -148,14 +156,61 @@ func latLngFormat(url string) string {
 }
 
 //Funksjon for å hente og unmarshalle JSON
-func getAndUnmarshal(s string, v interface{}) {
+func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) {
 	//Henter jsondataen i s
 	res, err := http.Get(s)
 	defer res.Body.Close()
-	errorHandling(err)
+	httpErrorHandling(w, err)
 	//Leser kroppen til jsondataen
 	jsonBytes, err2 := ioutil.ReadAll(res.Body)
 	errorHandling(err2)
 	//Legger jsondaten inn i variabelen v
-	errorHandling(json.Unmarshal(jsonBytes, &v))
+	httpErrorHandling(w, json.Unmarshal(jsonBytes, &v))
+}
+
+func executeTilbakemelding(w http.ResponseWriter) {
+	//Hvis det ikke regner, gjør temperaturvurderinger
+	if weath.Currently.WindSpeed < 8 {
+		if weath.Currently.PrecipIntensity < 1 {
+			if weath.Currently.Temperature >= 20 {
+				t, err := template.ParseFiles("forecast.html", "msg/above20.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			} else if weath.Currently.Temperature < 20 && weath.Currently.Temperature > 10 {
+				t, err := template.ParseFiles("forecast.html", "msg/below20.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			} else if weath.Currently.Temperature <= 0 {
+				t, err := template.ParseFiles("forecast.html", "msg/below0.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			}
+		} else {
+			if weath.Currently.PrecipIntensity > 1 && weath.Currently.PrecipIntensity < 6 {
+				t, err := template.ParseFiles("forecast.html", "msg/above1mm.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			} else if weath.Currently.PrecipIntensity > 6 {
+				t, err := template.ParseFiles("forecast.html", "msg/above6mm.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			} else {
+				t, err := template.ParseFiles("forecast.html", "msg/below0.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, weath)
+			}
+		}
+	} else if weath.Currently.WindSpeed >= 8 && weath.Currently.WindSpeed < 21 {
+		t, err := template.ParseFiles("forecast.html", "msg/kuling.html")
+		httpErrorHandling(w, err)
+		t.Execute(w, weath)
+	} else if weath.Currently.WindSpeed >= 21 && weath.Currently.WindSpeed < 32.7 {
+		t, err := template.ParseFiles("forecast.html", "msg/storm.html")
+		httpErrorHandling(w, err)
+		t.Execute(w, weath)
+	} else {
+		t, err := template.ParseFiles("forecast.html", "msg/orkan.html")
+		httpErrorHandling(w, err)
+		t.Execute(w, weath)
+	}
 }
