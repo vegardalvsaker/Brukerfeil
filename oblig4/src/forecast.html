@@ -91,9 +91,9 @@
     <nav>
         <h1> The Weather Report</h1>
         <ul>
-            <li>this city</li>
-            <li><a href="nvmthis.html">Go back</a></li>
-            <li><a href="nvmthis.html">placeholder</a></li>
+            <li>{{.Sted}}</li>
+            <li><a href="/">Gjør et nytt søk</a></li>
+            <li><a href="/">placeholder</a></li>
         </ul>
     </nav>
 </header>
@@ -104,7 +104,6 @@
 
 <div class="rad">
     <div class="col">
-        {{template "tempMessage"}}
         Time:                 {{ .Currently.Time}} <br>
         Temperature:          {{ .Currently.Temperature}} <br>
         ApparentTemperature:  {{ .Currently.ApparentTemperature}} <br>
@@ -113,9 +112,14 @@
         PrecipIntensity:      {{ .Currently.PrecipIntensity}} <br>
         PrecipProbability:    {{ .Currently.PrecipProbability}} <br>
         WindSpeed:            {{ .Currently.WindSpeed}} <br>
-        {{template "tempMessage"}}
+
     </div>
-    <div class="col">Videre informasjon skal være her</div>
+    <div class="col">
+        <h4 style="text-align: center">Info:</h4>
+        <h4 style="text-align: center">{{ .Currently.Temperature}}°C</h4>
+        <h4 style="text-align: center">{{.Currently.PrecipIntensity}} mm. nedbør</h4>
+        <p style="text-align: center"> {{template "message"}}</p>
+    </div>
 </div>
 </body>
 
