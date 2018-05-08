@@ -7,14 +7,81 @@
         .hidden {
             visibility: hidden;
         }
+        body {
+            background: #CBDBD5;
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #A9B48A;
+            color: #373737;
+            padding: 15px 15px 0 15px;
+        }
+        header h1 {
+            margin: 0;
+            display: inline;
+        }
+        nav ul {
+            margin: 0;
+            padding: 0 0 0 15px;
+            display: inline;
+        }
+        nav ul li {
+            background: #B56357;
+            color: #373737;
+            display: inline-block;
+            list-style-type: none;
+            padding: 5px 15px;
+        }
+        nav ul li a {
+            color: #373737;
+        }
+        #box {
+            margin: 0% 0% 0% 2.5%;
+            padding: 30px;
+            background: #B56357;
+            display: inline;
+        }
+        #floating-panel {
+            margin: 0 auto;
+            width: 100px;
+            display: inline;
+        }
+        .cstmbutton {
+            font: bold 11px Arial;
+            text-decoration: none;
+            background-color: #EEEEEE;
+            color: #333333;
+            padding: 2px 6px 2px 6px;
+            border-top: 1px solid #CCCCCC;
+            border-right: 1px solid #333333;
+            border-bottom: 1px solid #333333;
+            border-left: 1px solid #CCCCCC;
+        }
     </style>
 </head>
 <body>
-
-<div id="floating-panel">
-    <input id="address" type="textbox" placeholder="Søk etter sted...">
-    <input id="submit"  type="button"  value="Søk">
+<header>
+    <nav>
+        <h1> The Weather Report</h1>
+    </nav>
+</header>
+<br>
+<br>
+<br>
+<div id="box">
+    <div id="floating-panel">
+        <input id="address" type="textbox" placeholder="Søk etter sted...">
+        <input id="submit"  type="button"  value="Søk">
+        <a href="/forecast" id="onReload"></a>
+    </div>
 </div>
+
 
 <div id="map"></div>
 
@@ -23,24 +90,20 @@
     <input class="hidden" type="text" id="by" name="by">
 </form>
 
-<a href="/forecast" id="onReload"></a>
-
 <script>
     function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
         });
         var geocoder = new google.maps.Geocoder();
-
         document.getElementById('submit').addEventListener('click', function() {
             geocodeAddress(geocoder, map);
         });
-
         var by = {{.Sted}};
         if (by !== "Søk etter sted..." || by === "") {
-            document.getElementById('onReload').textContent = 'Til værmeldingen for ' + by;
+            document.getElementById('onReload').textContent = 'Vis været i ' + by;
+            document.getElementById('onReload').setAttribute("class", "cstmbutton")
         };
     }
-
     function geocodeAddress(geocoder, resultsMap) {
         var address = document.getElementById('address').value;
         geocoder.geocode({'address': address}, function(results, status) {
