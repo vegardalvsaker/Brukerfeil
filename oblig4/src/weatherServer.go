@@ -85,39 +85,31 @@ func index (w http.ResponseWriter, r *http.Request) {
 
 func runForecast (w http.ResponseWriter, r *http.Request) {
 	//Hvis en bruker går på /forecast uten å submitte koordinater
-	latLng = "===9((&%#'``#¤%agsdg"
-	if len(latLng) <= 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		t, err := template.ParseFiles("feil.html")
-		httpErrorHandling(w, err)
-		t.Execute(w, nil)
+		if len(latLng) <= 12 || !isCorrectRune(latLng) {
+			w.WriteHeader(http.StatusBadRequest)
+			t, err := template.ParseFiles("feil.html")
+			httpErrorHandling(w, err)
+			t.Execute(w, nil)
+		} else {
+			//Setter sammen API-urlen sammen med koordinatene
+			url := joinUrlAndCoord()
 
-		//http.Error(w,"Du må søke etter et sted før du kan hente værmeldingen! \nGå tilbake for å gjøre et søk", http.StatusBadRequest)
+			//Server prints for debugging
+			fmt.Println(r.URL.Path)
+			fmt.Println(latLng)
+			fmt.Println("Weather data collected from: ", url)
 
-	} else {
-		//Setter sammen API-urlen sammen med koordinatene
-		url := joinUrlAndCoord()
-
-		//Server prints for debugging
-		fmt.Println(r.URL.Path)
-		fmt.Println(latLng)
-		fmt.Println("Weather data collected from: ", url)
-
-		getAndUnmarshal(url, &weath, w)
-
-		//Funksjon for å velge ut "skreddersydde" meldinger til sluttbrukeren
-		executeTilbakemelding(w)
-
+			if !getAndUnmarshal(url, &weath, w) {
+				w.WriteHeader(http.StatusBadRequest)
+				t, err := template.ParseFiles("feil2.html")
+				httpErrorHandling(w, err)
+				t.Execute(w, nil)
+			} else {
+				//Funksjon for å velge ut "skreddersydde" meldinger til sluttbrukeren
+				executeTilbakemelding(w)
+			}
+		}
 	}
-
-
-}
-
-func joinUrlAndCoord() string {
-	latAndLang := latLng + langAndUnits
-	strSlice := []string{weatherUrlWithKey, latAndLang}
-	return strings.Join(strSlice, "/")
-}
 
 //Funksjon for å hente koordinatene og navn til det stedet brukeren ønsker værdata fra
 func getForm(r *http.Request){
@@ -125,8 +117,10 @@ func getForm(r *http.Request){
 	//Sjekker at brukeren gjør et POST-request til serveren
 	if r.Method == "POST" {
 		//Henter data fra form-tags fra HTMLen
+		//"kords" og "by" er name attributter i <input> tags i index.html
 		latLng = r.Form["kords"][0]
 		stedsNavn:= r.Form["by"][0]
+
 		//Legger stedet som blir søkt på i to forskjellige structs
 		by = Sted {
 			Sted: stedsNavn,
@@ -137,19 +131,8 @@ func getForm(r *http.Request){
 		//Printer informasjonen hentet fra brukeren til serveren
 		fmt.Println(latLng)
 		fmt.Println(stedsNavn)
-	}
-}
-
-func httpErrorHandling(w http.ResponseWriter, err error) {
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-//Enkel feilhåndtering
-func errorHandling(err error) {
-	if err != nil {
-		log.Fatal(err)
+	} else {
+		fmt.Printf("HTTP forespørsel er %v,venter på 'POST' før bruker input kan tas imot\n", r.Method)
 	}
 }
 
@@ -166,8 +149,14 @@ func latLngFormat(s string) string {
 	}
 }
 
+func joinUrlAndCoord() string {
+	latAndLang := latLng + langAndUnits
+	strSlice := []string{weatherUrlWithKey, latAndLang}
+	return strings.Join(strSlice, "/")
+}
+
 //Funksjon for å hente og unmarshalle JSON
-func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) {
+func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) bool {
 	//Henter jsondataen i s
 	res, err := http.Get(s)
 	defer res.Body.Close()
@@ -175,13 +164,19 @@ func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) {
 	//Leser kroppen til jsondataen
 	jsonBytes, err2 := ioutil.ReadAll(res.Body)
 	errorHandling(err2)
-	//Legger jsondaten inn i variabelen v
-	httpErrorHandling(w, json.Unmarshal(jsonBytes, &v))
+	if string(jsonBytes) == `{"code":400,"error":"The given location is invalid."}` || string(jsonBytes) ==`{"code":400,"error":"The given location (or time) is invalid."}`{
+		return false
+	} else {
+		//Legger jsondaten inn i variabelen
+		httpErrorHandling(w, json.Unmarshal(jsonBytes, &v))
+		return true
+	}
 }
 
 func executeTilbakemelding(w http.ResponseWriter) {
-	//Hvis det ikke regner, gjør temperaturvurderinger
+	//Hvis det ikke blåser, gjør nedbørsvurderinger
 	if weath.Currently.WindSpeed < 8 {
+		//Hvis det ikke regner, gjør temperaturvurderinger
 		if weath.Currently.PrecipIntensity < 1 {
 			if weath.Currently.Temperature >= 16 {
 				t, err := template.ParseFiles("forecast.html", "msg/above20.html")
@@ -229,3 +224,27 @@ func executeTilbakemelding(w http.ResponseWriter) {
 		t.Execute(w, weath)
 	}
 }
+
+//En ikke så veldig pen funksjon for å sjekke at en koordinat-string kun har tillatte tegn.
+func isCorrectRune(s string) bool {
+	for _, r := range s {
+		if !((r == '0') || (r == '1') || (r == '2') || (r == '3') || (r == '4') || (r == '5') || (r == '6') || (r == '7') || (r == '8') || (r == '9') || (r == '-') || (r == '(') || (r == ')') || ( r == '.') || (r == ' ') || ( r == ',')) {
+			return false
+		}
+	}
+	return true
+}
+
+func httpErrorHandling(w http.ResponseWriter, err error) {
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+//Enkel feilhåndtering
+func errorHandling(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
