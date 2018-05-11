@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"strings"
 	"strconv"
-	"errors"
 )
 
 const darksky  = "https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/58.8532585,5.732945500000028?lang=nb&units=si"
@@ -55,7 +54,7 @@ func TestGetAndUnmarshal (t *testing.T){
 		"https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/1234567894561285",
 		"https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/(58.8532432,5.409237492)",
 		"https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/xxxxzzzzcczccacaca",
-		//"https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/¤#&%//%#", Denne inputen kræsjer testen. Den hadde dog aldri kommet seg så langt at den ville kalt getAndUnmarshal()
+		//"https://api.darksky.net/forecast/a529911b60d81bab2c791732ad9ddf50/¤#&%//%#", //Denne inputen kræsjer testen. Den hadde dog aldri kommet seg så langt at den ville kalt getAndUnmarshal()
 	}
 	for i, s := range ødelagteLinker{
 		navn := "negativ" + strconv.Itoa(i)
@@ -78,7 +77,7 @@ func TestRunForecast (t *testing.T) {
 		"34.0522342,-118.2436849":              "Los Angeles",
 		"-33.9248685,18.424055299999964":       "Cape Town",
 		"37.566535,126.97796919999996":         "Seoul",
-		"55.755826, 37.617299900000035":        "Moskva",
+		"55.755826,37.617299900000035":        "Moskva",
 	}
 	corrupt := []string{
 		"askjhda k21237123()",
@@ -89,7 +88,7 @@ func TestRunForecast (t *testing.T) {
 		"569939,-12",  //10 characters
 		"569939,-123", //11 characters
 		"569939,-1234", //12 characters
-		"1616618816516851", //denne feiler fordi funksjonen sjekker ikke om alle de nødvendige runes er der.
+		"1616618816516851",
 	}
 
 	//Positiv testing
@@ -134,7 +133,6 @@ func TestRunForecast (t *testing.T) {
 				}
 			})
 		}
-
 }
 
 func TestLatLngFormat (t *testing.T) {
@@ -167,18 +165,18 @@ func TestJoinUrlAndCoord(t *testing.T) {
 		"34.0522342,-118.2436849":              "Los Angeles",
 		"-33.9248685,18.424055299999964":       "Cape Town",
 		"37.566535,126.97796919999996":         "Seoul",
-		"55.755826, 37.617299900000035":        "Moskva",
+		"55.755826,37.617299900000035":        "Moskva",
 	}
 	corrupt := []string{
 		"askjhda k21237123()",
 		"(-1111,3333)",
 		"Oslo",
-		"===9((&%#'``#¤%agsdg",
+		"===9((&%#'` `#¤%agsdg",
 		"",
-		"569939,-12",  //10 characters
+		"569939, -12",  //10 characters
 		"569939,-123", //11 characters
 		"569939,-1234", //12 characters
-		"1616618816516851", //denne feiler fordi funksjonen sjekker ikke om alle de nødvendige runes er der.
+		"1616618816516851",
 	}
 	for i, s := range kords {
 		navn := "positiv" + "/" + s
@@ -222,10 +220,6 @@ func TestJoinUrlAndCoord(t *testing.T) {
 	}
 }
 
-func TestErrorHandling (t *testing.T) {
-	err := errors.New("En vond feil har skjedd")
-	errorHandling(err)
-}
 
 /*
 //Prøvde å lage en test for funksjonen getForm, men sliter med å passe en body til requesten

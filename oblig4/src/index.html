@@ -98,6 +98,7 @@
         document.getElementById('submit').addEventListener('click', function() {
             geocodeAddress(geocoder, map);
         });
+        //Setter stedet som bruker har søkt på som value i knappen
         var by = {{.Sted}};
         if (by !== "Søk etter sted..." || by === "") {
             document.getElementById('onReload').textContent = 'Vis været i ' + by;
@@ -114,6 +115,7 @@
                     position: results[0].geometry.location
                 });
                 var latLng = marker.position;
+                //Putter koordinatene og stedsnavnet i inputs og submitter(POST)
                 document.getElementById("postLatLng").setAttribute("value", latLng);
                 document.getElementById("by").setAttribute("value", address);
                 document.getElementById("myForm").submit();

@@ -92,14 +92,13 @@
 
 <div class="rad">
     <div class="col">
-        Time:                 {{ .Currently.Time}} <br>
-        Temperature:          {{ .Currently.Temperature}} <br>
-        ApparentTemperature:  {{ .Currently.ApparentTemperature}} <br>
-        Humidity:             {{ .Currently.Humidity}} <br>
-        Summary:              {{ .Currently.Summary}} <br>
-        PrecipIntensity:      {{ .Currently.PrecipIntensity}} <br>
-        PrecipProbability:    {{ .Currently.PrecipProbability}} <br>
-        WindSpeed:            {{ .Currently.WindSpeed}} <br>
+        <h4 style="text-align: center">Været for {{.Sted}} akkurat nå!</h4>
+        Temperatur:           {{ .Currently.Temperature}}°C <br>
+        Føles som:            {{ .Currently.ApparentTemperature}}°C <br>
+        Fuktighet:            {{ .Currently.Humidity}} <br>
+        Tekstoppsummering:    {{ .Currently.Summary}} <br>
+        Nedbør:               {{ .Currently.PrecipIntensity}} mm <br>
+        WindSpeed:            {{ .Currently.WindSpeed}} m/s <br>
 
     </div>
     <div class="col">

@@ -8,6 +8,10 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"html/template"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 type Sted struct {
@@ -19,15 +23,12 @@ type WeatherData struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Currently struct {
-		Time                int     `json:"time"`
 		Summary             string  `json:"summary"`
-		Icon                string  `json:"icon"`
 		PrecipIntensity     float64    `json:"precipIntensity"`
 		PrecipProbability   float64     `json:"precipProbability"`
 		Temperature         float64 `json:"temperature"`
 		ApparentTemperature float64 `json:"apparentTemperature"`
 		Humidity            float64 `json:"humidity"`
-		Pressure            float64 `json:"pressure"`
 		WindSpeed           float64 `json:"windSpeed"`
 	} `json:"currently"`
 }
@@ -56,6 +57,7 @@ func server() {
 }
 
 func main() {
+	sigintHandtering()
 	fmt.Println("Webserver for værdata startet!")
 	fmt.Println("Lytter for http requests på localhost:8080")
 	server()
@@ -129,10 +131,14 @@ func getForm(r *http.Request){
 			Sted: stedsNavn,
 		}
 		//Printer informasjonen hentet fra brukeren til serveren
-		fmt.Println(latLng)
-		fmt.Println(stedsNavn)
+		fmt.Println("Bruker input er nå blitt hentet:")
+		fmt.Println("Bruker sin adresse:",r.RemoteAddr)
+		fmt.Println("Koordinater:",latLng)
+		fmt.Println("Sted:", stedsNavn)
+		fmt.Println("----------------------------------------------------")
+		fmt.Println()
 	} else {
-		fmt.Printf("HTTP forespørsel er %v,venter på 'POST' før bruker input kan tas imot\n", r.Method)
+		fmt.Printf("HTTP forespørsel er '%v', venter på 'POST' før brukerinput kan tas imot\n", r.Method)
 	}
 }
 
@@ -148,7 +154,7 @@ func latLngFormat(s string) string {
 		return s
 	}
 }
-
+//Setter sammen koordinatene til en fungerende URL til API-kall
 func joinUrlAndCoord() string {
 	latAndLang := latLng + langAndUnits
 	strSlice := []string{weatherUrlWithKey, latAndLang}
@@ -164,7 +170,7 @@ func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) bool {
 	//Leser kroppen til jsondataen
 	jsonBytes, err2 := ioutil.ReadAll(res.Body)
 	errorHandling(err2)
-	if string(jsonBytes) == `{"code":400,"error":"The given location is invalid."}` || string(jsonBytes) ==`{"code":400,"error":"The given location (or time) is invalid."}`{
+	if string(jsonBytes) == `{"code":400,"error":"The given location is invalid."}` || string(jsonBytes) ==`{"code":400,"error":"The given location (or time) is invalid."}` || string(jsonBytes) == "Bad Request"{
 		return false
 	} else {
 		//Legger jsondaten inn i variabelen
@@ -172,7 +178,7 @@ func getAndUnmarshal(s string, v interface{}, w http.ResponseWriter) bool {
 		return true
 	}
 }
-
+//Funksjon for å finne ut hvilken tilbakemelding brukeren skal få
 func executeTilbakemelding(w http.ResponseWriter) {
 	//Hvis det ikke blåser, gjør nedbørsvurderinger
 	if weath.Currently.WindSpeed < 8 {
@@ -228,7 +234,7 @@ func executeTilbakemelding(w http.ResponseWriter) {
 //En ikke så veldig pen funksjon for å sjekke at en koordinat-string kun har tillatte tegn.
 func isCorrectRune(s string) bool {
 	for _, r := range s {
-		if !((r == '0') || (r == '1') || (r == '2') || (r == '3') || (r == '4') || (r == '5') || (r == '6') || (r == '7') || (r == '8') || (r == '9') || (r == '-') || (r == '(') || (r == ')') || ( r == '.') || (r == ' ') || ( r == ',')) {
+		if !((r == '0') || (r == '1') || (r == '2') || (r == '3') || (r == '4') || (r == '5') || (r == '6') || (r == '7') || (r == '8') || (r == '9') || (r == '-') || ( r == '.') || ( r == ',')) {
 			return false
 		}
 	}
@@ -247,4 +253,18 @@ func errorHandling(err error) {
 		log.Fatal(err)
 	}
 }
-
+//Håndtering av SIG-INT signal for å skru av tjeneren på en trygg måte.
+func sigintHandtering() {
+	chsig := make(chan os.Signal, 1)
+	signal.Notify(chsig, syscall.SIGINT)
+	go func() {
+		for sig := range chsig {
+			switch sig {
+			case syscall.SIGINT:
+				fmt.Println("Sigint received. Shutting down safely")
+				time.Sleep(3e+9)
+				os.Exit(0)
+			}
+		}
+	}()
+}
